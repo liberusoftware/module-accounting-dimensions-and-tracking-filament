@@ -16,14 +16,16 @@ use Liberu\Accounting\DimensionsFilament\Resources\DimensionResource\Pages\ListD
 
 it('registers and configures accounting-dimensions-and-tracking-filament filament resources', function (): void {
     $provider = $this->app->register(DimensionsFilamentServiceProvider::class, force: true);
-    if (method_exists($provider, 'boot')) { $provider->boot(); }
+    if (method_exists($provider, 'boot')) {
+        $provider->boot();
+    }
     $plugin = DimensionsFilamentPlugin::make();
     $panel = Panel::make()->id('test-dim');
     $plugin->register($panel);
     $plugin->boot($panel);
     expect($plugin->getId())->toBeString()->not->toBeEmpty();
 
-    $host = new ListDimensions;
+    $host = new ListDimensions();
     expect(DimensionResource::getPages())->toBeArray();
     expect(DimensionResource::getEloquentQuery())->toBeInstanceOf(Builder::class);
     expect(DimensionResource::form(Schema::make($host)))->toBeInstanceOf(Schema::class);
@@ -31,7 +33,7 @@ it('registers and configures accounting-dimensions-and-tracking-filament filamen
     expect(Closure::bind(fn () => $this->getHeaderActions(), $host, $host::class)())->toBeArray();
 
     $entity = LegalEntity::query()->create(['name' => 'Dim Ent', 'currency_code' => 'USD', 'accounting_basis' => 'accrual']);
-    $createPage = new CreateDimension;
+    $createPage = new CreateDimension();
     $dim = Closure::bind(fn () => $this->handleRecordCreation([
         'kind' => 'department',
         'code' => 'DEPT',
@@ -39,7 +41,7 @@ it('registers and configures accounting-dimensions-and-tracking-filament filamen
     ]), $createPage, $createPage::class)();
     expect($dim)->not->toBeNull();
 
-    $editPage = new EditDimension;
+    $editPage = new EditDimension();
     $updated = Closure::bind(fn () => $this->handleRecordUpdate($dim, [
         'kind' => 'department',
         'code' => 'DEPT',
